@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 
@@ -5,10 +7,13 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from config.celery import create_users_async
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 class UserViewSet(ModelViewSet):
@@ -27,3 +32,22 @@ class UserViewSet(ModelViewSet):
             create_users_async(user_count)
 
         return Response(data={'user_count': user_count}, status=status.HTTP_201_CREATED)
+
+
+class HealthViewSet(APIView):
+    def get(self, request, *args, **kwargs):
+        logger.info(
+            'Health Page Test!! : info'
+        )
+        logger.warning(
+            'Health Page Test!! : warning'
+        )
+        logger.error(
+            'Health Page Test !! : error'
+        )
+
+        first_user = User.objects.first()
+        data = {
+            'first_user': first_user.username
+        }
+        return Response(data=data)

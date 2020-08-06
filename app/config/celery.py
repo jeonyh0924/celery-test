@@ -4,7 +4,8 @@ import os
 import uuid
 from time import sleep
 
-from celery import Celery, shared_task
+# from celery import Celery, shared_task
+from celery import shared_task, Celery
 from django.contrib.auth import get_user_model
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -29,9 +30,9 @@ app.autodiscover_tasks()
 def create_users_async(user_count):
     User = get_user_model()
     for i in range(user_count):
-        a = 0 / 0
+        # a = 0 / 0
         sleep(3)
-        User.objects.create(username=f'user_{i}')
+        User.objects.create(username=f'{uuid.uuid4()}')
 
         """
         워커가 죽는 이유를 알기 위해서 센트리의 역할이 필요하다.
